@@ -8,6 +8,8 @@ const nameInputElm = document.querySelector('.name-input');
 const priceInputElm = document.querySelector('.price-input');
 const submitBtnElm = document.querySelector('#submit');
 
+const products = [];
+
 const receiveInputsValue = () => {
 	const name = nameInputElm.value;
 	const price = priceInputElm.value;
@@ -49,6 +51,32 @@ const resetInputs = () => {
 	nameInputElm.value = '';
 	priceInputElm.value = '';
 };
+const addProduct = (name, price) => {
+	const product = {
+		id: products.length + 1,
+		name,
+		price,
+	};
+
+	//store product to data memory
+	products.push(product);
+
+	return product;
+};
+const showProductToUI = (productInfo) => {
+	const { id, name, price } = productInfo;
+	const elm = `<li class="list-group-item d-flex flex-row justify-content-between" data-productId='${id}'>
+	<div class="product-info" >
+		${name} - <span class="product-price">$${price}</span>
+	</div>
+	<div class="action-btn icon ms-3">
+		<i class="fa-solid fa-pencil edit-product text-info"></i>
+		<i class="fa-solid fa-trash-arrow-up delete-product text-danger"></i>
+	</div>
+</li>`;
+	collectionElm.insertAdjacentHTML('afterbegin', elm);
+	showMessage('product added successfully', 'success');
+};
 
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
@@ -63,4 +91,11 @@ formElm.addEventListener('submit', (e) => {
 
 	//reset the input
 	resetInputs();
+
+	//add product to data store
+	const product = addProduct(name, price);
+
+	//show product to UI
+	showProductToUI(product);
 });
+
