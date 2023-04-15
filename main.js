@@ -8,7 +8,7 @@ const nameInputElm = document.querySelector('.name-input');
 const priceInputElm = document.querySelector('.price-input');
 const submitBtnElm = document.querySelector('#submit');
 
-const products = [];
+let products = [];
 
 const receiveInputsValue = () => {
 	const name = nameInputElm.value;
@@ -77,6 +77,19 @@ const showProductToUI = (productInfo) => {
 	collectionElm.insertAdjacentHTML('afterbegin', elm);
 	showMessage('product added successfully', 'success');
 };
+const getProductId = (e) => {
+	const liElm = e.target.parentElement.parentElement;
+	return (id = liElm.getAttribute('data-productId'));
+};
+
+const removeProduct = (id) => {
+	products = products.filter((product) => product.id !== id);
+};
+
+const removeProductFromUI = (id) => {
+	document.querySelector(`[data-productId="${id}"]`).remove();
+	showMessage('product deleted successfully', 'info');
+};
 
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
@@ -99,3 +112,14 @@ formElm.addEventListener('submit', (e) => {
 	showProductToUI(product);
 });
 
+collectionElm.addEventListener('click', (e) => {
+	if (e.target.classList.contains('delete-product')) {
+		//get the product id
+		const id = getProductId(e);
+		//remove product from data store
+		removeProduct(id);
+
+		//remove product from UI
+		removeProductFromUI(id);
+	}
+});
