@@ -91,6 +91,18 @@ const removeProductFromUI = (id) => {
 	showMessage('product deleted successfully', 'info');
 };
 
+const addProductToLocalStorage = (product) => {
+	let products;
+	if (localStorage.getItem('storeProducts')) {
+		products = JSON.parse(localStorage.getItem('storeProducts'));
+		products.push(product);
+	} else {
+		products = [];
+		products.push(product);
+	}
+	localStorage.setItem('storeProducts', JSON.stringify(products));
+};
+
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
 	e.preventDefault();
@@ -107,6 +119,9 @@ formElm.addEventListener('submit', (e) => {
 
 	//add product to data store
 	const product = addProduct(name, price);
+
+	//add product to localStorage
+	addProductToLocalStorage(product);
 
 	//show product to UI
 	showProductToUI(product);
