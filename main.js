@@ -8,7 +8,9 @@ const nameInputElm = document.querySelector('.name-input');
 const priceInputElm = document.querySelector('.price-input');
 const submitBtnElm = document.querySelector('#submit');
 
-let products = [];
+let products = localStorage.getItem('storeProducts')
+	? JSON.parse(localStorage.getItem('storeProducts'))
+	: [];
 
 const receiveInputsValue = () => {
 	const name = nameInputElm.value;
@@ -64,6 +66,10 @@ const addProduct = (name, price) => {
 	return product;
 };
 const showProductToUI = (productInfo) => {
+	const notFoundElm = document.querySelector('.not-found');
+	if (notFoundElm) {
+		notFoundElm.remove();
+	}
 	const { id, name, price } = productInfo;
 	const elm = `<li class="list-group-item d-flex flex-row justify-content-between" data-productId='${id}'>
 	<div class="product-info" >
@@ -103,6 +109,29 @@ const addProductToLocalStorage = (product) => {
 	localStorage.setItem('storeProducts', JSON.stringify(products));
 };
 
+const showAllProductsToShow = (products) => {
+	let liElms;
+	liElms =
+		products.length === 0
+			? '<li class="not-found show-text">No products to show</li>'
+			: '';
+	//sorting products list
+	products.sort((a, b) => b.id - a.id);
+	products.forEach((product) => {
+		liElms += `<li class="list-group-item d-flex flex-row justify-content-between" data-productId='${product.id}'>
+	<div class="product-info" >
+		${product.name} - <span class="product-price">$${product.price}</span>
+	</div>
+	<div class="action-btn icon ms-3">
+		<i class="fa-solid fa-pencil edit-product text-info"></i>
+		<i class="fa-solid fa-trash-arrow-up delete-product text-danger"></i>
+	</div>
+</li>`;
+	});
+
+	collectionElm.insertAdjacentHTML('afterbegin', liElms);
+};
+
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
 	e.preventDefault();
@@ -138,3 +167,7 @@ collectionElm.addEventListener('click', (e) => {
 		removeProductFromUI(id);
 	}
 });
+
+document.addEventListener('DOMContentLoaded', () =>
+	showAllProductsToShow(products)
+);
