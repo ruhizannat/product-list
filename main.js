@@ -195,6 +195,15 @@ const updateProductsToStorage = (product) => {
 	//save back to localStorage
 	localStorage.setItem('storeProducts', JSON.stringify(products));
 };
+
+const handelSearchFiltered = (e) => {
+	const textElm = e.target.value;
+	// filter the product list
+	const filteredProducts = products.filter((product) =>
+		product.name.includes(textElm.toLowerCase())
+	);
+	showAllProductsToShow(filteredProducts);
+};
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
 	e.preventDefault();
@@ -261,6 +270,8 @@ collectionElm.addEventListener('click', (e) => {
 		populateEditState(foundProduct);
 	}
 });
+
+searchInputElm.addEventListener('keyup', handelSearchFiltered);
 
 document.addEventListener('DOMContentLoaded', () =>
 	showAllProductsToShow(products)
