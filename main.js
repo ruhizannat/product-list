@@ -6,7 +6,7 @@ const msgElm = document.querySelector('.msg');
 const collectionElm = document.querySelector('.collection');
 const nameInputElm = document.querySelector('.name-input');
 const priceInputElm = document.querySelector('.price-input');
-const submitBtnElm = document.querySelector('#submit');
+const submitBtnElm = document.querySelector('.submit-btn');
 
 let products = localStorage.getItem('storeProducts')
 	? JSON.parse(localStorage.getItem('storeProducts'))
@@ -145,6 +145,18 @@ const showAllProductsToShow = (products) => {
 	collectionElm.insertAdjacentHTML('afterbegin', liElms);
 };
 
+const findProduct = (id) => {
+	return products.find((product) => product.id === id);
+};
+
+const populateEditState = (product) => {
+	(nameInputElm.value = product.name), (priceInputElm.value = product.price);
+
+	//change button element
+	submitBtnElm.textContent = 'update';
+	submitBtnElm.classList.add('warning');
+};
+
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
 	e.preventDefault();
@@ -170,9 +182,9 @@ formElm.addEventListener('submit', (e) => {
 });
 
 collectionElm.addEventListener('click', (e) => {
+	const id = getProductId(e);
 	if (e.target.classList.contains('delete-product')) {
 		//get the product id
-		const id = getProductId(e);
 		//remove product from data store
 		removeProduct(id);
 		//remove product from localStorage
@@ -180,6 +192,11 @@ collectionElm.addEventListener('click', (e) => {
 
 		//remove product from UI
 		removeProductFromUI(id);
+	} else if (e.target.classList.contains('edit-product')) {
+		//find the product
+		const foundProduct = findProduct(id);
+		//populate existing form data in edit state
+		populateEditState(foundProduct);
 	}
 });
 
