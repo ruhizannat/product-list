@@ -123,6 +123,7 @@ const addProductToLocalStorage = (product) => {
 };
 
 const showAllProductsToShow = (products) => {
+	collectionElm.textContent = '';
 	let liElms;
 	liElms =
 		products.length === 0
@@ -155,8 +156,24 @@ const populateEditState = (product) => {
 	//change button element
 	submitBtnElm.textContent = 'update';
 	submitBtnElm.classList.add('warning');
+	submitBtnElm.classList.add('update-btn');
+	submitBtnElm.setAttribute('data-id', product.id);
 };
 
+const updateProduct = (receivedProduct) => {
+	const updatedProduct = products.map((product) => {
+		if (product.id === receivedProduct.id) {
+			return {
+				...product,
+				name: receivedProduct.name,
+				price: receivedProduct.price,
+			};
+		} else {
+			return product;
+		}
+	});
+	return updatedProduct;
+};
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
 	e.preventDefault();
@@ -170,6 +187,28 @@ formElm.addEventListener('submit', (e) => {
 
 	//reset the input
 	resetInputs();
+
+	if (submitBtnElm.classList.contains('update-btn')) {
+		//user want to update product
+		const id = +submitBtnElm.dataset.id;
+		const product = {
+			id,
+			name,
+			price,
+		};
+		//update data to data memory
+		const updatedProduct = updateProduct(product);
+
+		// update memory
+		products = updatedProduct;
+
+		//DOM update
+		showAllProductsToShow(updatedProduct);
+
+		//localStorage update 
+
+		return;
+	}
 
 	//add product to data store
 	const product = addProduct(name, price);
