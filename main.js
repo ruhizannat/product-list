@@ -162,8 +162,8 @@ const populateEditState = (product) => {
 	submitBtnElm.setAttribute('data-id', product.id);
 };
 
-const updateProduct = (receivedProduct) => {
-	const updatedProduct = products.map((product) => {
+const updateProduct = (receivedProduct, storageProduct) => {
+	const updatedProduct = storageProduct.map((product) => {
 		if (product.id === receivedProduct.id) {
 			return {
 				...product,
@@ -182,6 +182,18 @@ const clearEditForm = () => {
 	submitBtnElm.classList.remove('warning');
 	submitBtnElm.classList.remove('update-btn');
 	searchInputElm.removeAttribute('[data-id]');
+};
+
+const updateProductsToStorage = (product) => {
+	let products;
+	// find the product from localStorage
+	products = JSON.parse(localStorage.getItem('storeProducts'));
+
+	//update existing product with the new product
+	products = updateProduct(product, products);
+
+	//save back to localStorage
+	localStorage.setItem('storeProducts', JSON.stringify(products));
 };
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
@@ -206,7 +218,7 @@ formElm.addEventListener('submit', (e) => {
 			price,
 		};
 		//update data to data memory
-		const updatedProduct = updateProduct(product);
+		const updatedProduct = updateProduct(product, products);
 
 		// update memory
 		products = updatedProduct;
@@ -215,6 +227,7 @@ formElm.addEventListener('submit', (e) => {
 		showAllProductsToShow(updatedProduct);
 
 		//localStorage update
+		updateProductsToStorage(product);
 
 		//clear the edit state
 		clearEditForm();
