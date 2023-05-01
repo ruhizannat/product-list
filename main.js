@@ -85,16 +85,29 @@ const showProductToUI = (productInfo) => {
 };
 const getProductId = (e) => {
 	const liElm = e.target.parentElement.parentElement;
-	return (id = liElm.getAttribute('data-productId'));
+	const id = Number(liElm.getAttribute('data-productId'));
+	return id;
+};
+
+const updateAfterRemove = (products, id) => {
+	return products.filter((product) => product.id !== id);
 };
 
 const removeProduct = (id) => {
-	products = products.filter((product) => product.id !== id);
+	products = updateAfterRemove(products, id);
 };
 
 const removeProductFromUI = (id) => {
 	document.querySelector(`[data-productId="${id}"]`).remove();
 	showMessage('product deleted successfully', 'info');
+};
+
+const removeProductFromStorage = (id) => {
+	let products;
+	products = JSON.parse(localStorage.getItem('storeProducts'));
+	products = updateAfterRemove(products, id);
+
+	localStorage.setItem('storeProducts', JSON.stringify(products));
 };
 
 const addProductToLocalStorage = (product) => {
@@ -115,7 +128,7 @@ const showAllProductsToShow = (products) => {
 		products.length === 0
 			? '<li class="not-found show-text">No products to show</li>'
 			: '';
-	//sorting products list
+	//sorting product list
 	products.sort((a, b) => b.id - a.id);
 	products.forEach((product) => {
 		liElms += `<li class="list-group-item d-flex flex-row justify-content-between" data-productId='${product.id}'>
@@ -162,6 +175,8 @@ collectionElm.addEventListener('click', (e) => {
 		const id = getProductId(e);
 		//remove product from data store
 		removeProduct(id);
+		//remove product from localStorage
+		removeProductFromStorage(id);
 
 		//remove product from UI
 		removeProductFromUI(id);
