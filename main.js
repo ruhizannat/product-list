@@ -123,7 +123,9 @@ const addProductToLocalStorage = (product) => {
 };
 
 const showAllProductsToShow = (products) => {
+	// clear existing content form collection element /ul
 	collectionElm.textContent = '';
+
 	let liElms;
 	liElms =
 		products.length === 0
@@ -154,7 +156,7 @@ const populateEditState = (product) => {
 	(nameInputElm.value = product.name), (priceInputElm.value = product.price);
 
 	//change button element
-	submitBtnElm.textContent = 'update';
+	submitBtnElm.textContent = 'Update';
 	submitBtnElm.classList.add('warning');
 	submitBtnElm.classList.add('update-btn');
 	submitBtnElm.setAttribute('data-id', product.id);
@@ -173,6 +175,13 @@ const updateProduct = (receivedProduct) => {
 		}
 	});
 	return updatedProduct;
+};
+
+const clearEditForm = () => {
+	submitBtnElm.textContent = 'Submit';
+	submitBtnElm.classList.remove('warning');
+	submitBtnElm.classList.remove('update-btn');
+	searchInputElm.removeAttribute('[data-id]');
 };
 formElm.addEventListener('submit', (e) => {
 	// browser reload prevent
@@ -205,19 +214,20 @@ formElm.addEventListener('submit', (e) => {
 		//DOM update
 		showAllProductsToShow(updatedProduct);
 
-		//localStorage update 
+		//localStorage update
 
-		return;
+		//clear the edit state
+		clearEditForm();
+	} else {
+		//add product to data store
+		const product = addProduct(name, price);
+
+		//add product to localStorage
+		addProductToLocalStorage(product);
+
+		//show product to UI
+		showProductToUI(product);
 	}
-
-	//add product to data store
-	const product = addProduct(name, price);
-
-	//add product to localStorage
-	addProductToLocalStorage(product);
-
-	//show product to UI
-	showProductToUI(product);
 });
 
 collectionElm.addEventListener('click', (e) => {
