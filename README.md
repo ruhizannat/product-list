@@ -7,7 +7,7 @@
 ### Installation
 
 Clone the repo
-git clone
+git clone https://github.com/ruhizannat/product-list.git
 
 ### Used tools & technologies
 
